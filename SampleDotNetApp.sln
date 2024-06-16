@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleDotNetApp", "SampleDotNetApp.csproj", "{780D97F2-1EBB-4320-B552-F4938A104710}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleDotNetApp", "SampleDotNetApp/SampleDotNetApp.csproj", "{780D97F2-1EBB-4320-B552-F4938A104710}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
