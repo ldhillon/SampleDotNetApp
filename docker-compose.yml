@@ -2,27 +2,25 @@ version: '3'
 
 services:
   selenium-hub:
-    image: selenium/hub:latest   # or a specific version you verified
+    image: selenium/hub:latest 
     container_name: selenium-hub
     ports:
       - "4444:4444"
   chrome:
-    image: selenium/node-chrome:4.11.0-20231106 # Specify the exact version
-    container_name: chrome # Add container name for Chrome node
+    image: selenium/node-chrome:latest  # Use 'latest' or a valid version
+    container_name: chrome
     depends_on:
       - selenium-hub
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
   mywebapp:
     build: ./MyWebApp
-    container_name: mywebapp  # Add container name for the web app
-
+    container_name: mywebapp 
   mywebapp-tests:
     build: ./MyWebApp.Tests
-    container_name: mywebapp-tests  # Add container name for the tests
+    container_name: mywebapp-tests 
     depends_on:
       - selenium-hub
       - mywebapp
