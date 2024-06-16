@@ -19,11 +19,11 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.0'  # Adjust the .NET version as per your project requirement
+          dotnet-version: '8.0'
 
       - name: Create custom Docker network
         run: |
-          docker network create selenium-grid || true  # Create the network if it does not exist
+          docker network create selenium-grid || true
 
       - name: Build .NET application
         run: dotnet build --configuration Release
@@ -36,7 +36,7 @@ jobs:
           docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 --network-alias selenium-hub selenium/hub:4.21.0-20240522
 
       - name: Wait for Selenium Hub to be ready
-        run: sleep 30 # Wait for 30 seconds to ensure Selenium Hub is up and running
+        run: sleep 30
 
       - name: Check Selenium Hub status
         run: curl http://localhost:4444/wd/hub/status
@@ -50,7 +50,7 @@ jobs:
             selenium/node-chrome:4.21.0-20240522
 
       - name: Wait for Chrome Node to be ready
-        run: sleep 30 # Wait for 30 seconds to ensure Chrome Node is up and running
+        run: sleep 30
 
       - name: Check Selenium Hub status again
         run: curl http://localhost:4444/wd/hub/status
@@ -67,8 +67,11 @@ jobs:
       - name: Check detailed status of Selenium Grid
         run: curl http://localhost:4444/status
 
-      - name: Run .NET tests
-        run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx"
+      - name: Check connectivity from .NET test container to Selenium Hub
+        run: docker run --network selenium-grid --rm curlimages/curl:7.85.0 curl http://selenium-hub:4444/status
+
+      - name: Run .NET tests with additional logging
+        run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx" -v d
 
       - name: Upload test results
         if: always()
