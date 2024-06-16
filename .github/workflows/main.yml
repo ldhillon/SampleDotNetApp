@@ -34,7 +34,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.x'  # Adjust the .NET version as per your project requirement
+          dotnet-version: '8.0'  # Adjust the .NET version as per your project requirement
 
       - name: Build .NET application
         run: dotnet build --configuration Release
@@ -70,7 +70,6 @@ jobs:
         run: |
           docker stop sample-dotnet-app
           docker rm sample-dotnet-app
-
 
 # name: CI
 
