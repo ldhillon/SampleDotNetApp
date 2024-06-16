@@ -9,9 +9,9 @@ using AventStack.ExtentReports.Reporter;
 [TestFixture]
 public class SeleniumTests
 {
-    private IWebDriver _driver;
-    private ExtentReports _extent;
-    private ExtentTest _test;
+    private IWebDriver? _driver;
+    private ExtentReports? _extent;
+    private ExtentTest? _test;
 
     [OneTimeSetUp]
     public void Setup()
@@ -36,13 +36,13 @@ public class SeleniumTests
     {
         try
         {
-            _driver.Navigate().GoToUrl("http://sample-dotnet-app:8080");
-            Assert.That(_driver.PageSource, Does.Contain("Hello, world!"));
-            _test.Pass("Test_HelloWorld passed.");
+            _driver?.Navigate().GoToUrl("http://sample-dotnet-app:8080");
+            Assert.That(_driver?.PageSource, Does.Contain("Hello, world!"));
+            _test?.Pass("Test_HelloWorld passed.");
         }
         catch (Exception ex)
         {
-            _test.Fail(ex.Message);
+            _test?.Fail(ex.Message);
             throw;
         }
     }
@@ -52,12 +52,12 @@ public class SeleniumTests
     {
         _driver?.Quit();
         _driver?.Dispose();
-        _extent.Flush();
+        _extent?.Flush();
     }
 
     [OneTimeTearDown]
     public void TearDown()
     {
-        _extent.Flush();
+        _extent?.Flush();
     }
 }
