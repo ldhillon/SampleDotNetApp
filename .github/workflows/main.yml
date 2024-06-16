@@ -51,11 +51,8 @@ jobs:
         run: |
           docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:80 sample-dotnet-app
 
-      - name: Wait for .NET application to be ready
-        run: sleep 30 # Adjust this duration based on your app's startup time
-
-      - name: Wait for Selenium Grid to be ready
-        run: sleep 240 # Increased wait time to ensure Selenium Grid is up
+      - name: Wait for services to be ready
+        run: sleep 60 # Wait for 60 seconds to ensure all services are up and running
 
       - name: Check Selenium Grid status
         run: curl http://localhost:4444/wd/hub/status
