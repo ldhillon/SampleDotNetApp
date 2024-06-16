@@ -1,4 +1,4 @@
-name: mydotnet
+name: seleniumTestDotNet
 
 on:
   push:
@@ -17,33 +17,24 @@ jobs:
         image: selenium/hub:4.21.0-20240522
         ports:
           - 4444:4444
-
       selenium-chrome:
         image: selenium/node-chrome:4.21.0-20240522
-        depends_on:
-          - selenium-hub
-        environment:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-
+        ports:
+          - 5900
+        options: > 
+          --network host --shm-size=2g
       selenium-edge:
         image: selenium/node-edge:4.21.0-20240522
-        depends_on:
-          - selenium-hub
-        environment:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-          
+        ports:
+          - 5901
+        options: > 
+          --network host --shm-size=2g
       selenium-firefox:
         image: selenium/node-firefox:4.21.0-20240522
-        depends_on:
-          - selenium-hub
-        environment:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+        ports:
+          - 5902
+        options: > 
+          --network host --shm-size=2g
 
     steps:
       - name: Checkout repository
@@ -52,7 +43,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.x'  # Adjust the .NET version as per your project requirement
+          dotnet-version: '6.x'  # Adjust the .NET version as per your project requirement
 
       - name: Build .NET application
         run: dotnet build --configuration Release
