@@ -1,7 +1,10 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0 
 WORKDIR /app
 COPY . .
 RUN dotnet restore
-RUN dotnet build -c Release -o /app/build
+RUN dotnet test /app/MyWebApp.Tests/MyWebApp.Tests.csproj -c Release  
 
-ENTRYPOINT ["dotnet", "test", "/app/build/MyWebApp.Tests.dll"]
+# Check if your test DLL exists (optional)
+# RUN ls /app/MyWebApp.Tests/bin/Release/net8.0/MyWebApp.Tests.dll
+
+ENTRYPOINT ["dotnet", "test", "/app/MyWebApp.Tests/bin/Release/net8.0/MyWebApp.Tests.dll"]

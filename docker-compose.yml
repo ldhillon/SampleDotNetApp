@@ -7,7 +7,7 @@ services:
     ports:
       - "4444:4444"
   chrome:
-    image: selenium/node-chrome:latest  # Use 'latest' or a valid version
+    image: selenium/node-chrome:latest
     container_name: chrome
     depends_on:
       - selenium-hub
