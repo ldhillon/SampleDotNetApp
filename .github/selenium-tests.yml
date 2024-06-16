@@ -1,0 +1,27 @@
+name: Selenium Tests
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  selenium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start Selenium Grid
+        run: docker-compose up -d
+
+      - name: Build and run .NET app
+        run: docker-compose up -d mywebapp  # Use the container name
+
+      - name: Run Selenium tests
+        run: docker-compose run mywebapp-tests  # Use the container name
+
+      - name: Stop Selenium Grid and .NET app
+        run: docker-compose down
+
