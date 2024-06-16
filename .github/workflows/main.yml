@@ -38,15 +38,15 @@ jobs:
 
       - name: Run Selenium Chrome Node
         run: |
-          docker run -d --name selenium-chrome --network selenium-grid --shm-size=2g selenium/node-chrome:4.21.0-20240522
+          docker run -d --name selenium-chrome --network selenium-grid --shm-size=2g -e SE_EVENT_BUS_HOST=selenium-hub -e SE_EVENT_BUS_PUBLISH_PORT=4442 -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 selenium/node-chrome:4.21.0-20240522
 
       - name: Run Selenium Edge Node
         run: |
-          docker run -d --name selenium-edge --network selenium-grid --shm-size=2g selenium/node-edge:4.21.0-20240522
+          docker run -d --name selenium-edge --network selenium-grid --shm-size=2g -e SE_EVENT_BUS_HOST=selenium-hub -e SE_EVENT_BUS_PUBLISH_PORT=4442 -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 selenium/node-edge:4.21.0-20240522
 
       - name: Run Selenium Firefox Node
         run: |
-          docker run -d --name selenium-firefox --network selenium-grid --shm-size=2g selenium/node-firefox:4.21.0-20240522
+          docker run -d --name selenium-firefox --network selenium-grid --shm-size=2g -e SE_EVENT_BUS_HOST=selenium-hub -e SE_EVENT_BUS_PUBLISH_PORT=4442 -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 selenium/node-firefox:4.21.0-20240522
 
       - name: Run Docker container for .NET application
         run: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Wait for Selenium Grid to be ready
         run: |
-          sleep 120 # Increased wait time to ensure Selenium Grid is up
+          sleep 180 # Increased wait time to ensure Selenium Grid is up
 
       - name: Check Selenium Grid status
         run: |
@@ -72,6 +72,18 @@ jobs:
         run: |
           docker network ls
           docker network inspect selenium-grid
+
+      - name: Inspect Chrome Node Logs
+        run: |
+          docker logs selenium-chrome
+
+      - name: Inspect Edge Node Logs
+        run: |
+          docker logs selenium-edge
+
+      - name: Inspect Firefox Node Logs
+        run: |
+          docker logs selenium-firefox
 
       - name: Restore dependencies for tests
         run: dotnet restore SampleDotNetApp.Tests
