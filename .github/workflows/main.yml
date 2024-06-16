@@ -59,6 +59,15 @@ jobs:
         run: |
           curl http://localhost:4444/wd/hub/status
 
+      - name: Check running Docker containers
+        run: |
+          docker ps -a
+
+      - name: Check network connections
+        run: |
+          docker network ls
+          docker network inspect github_network
+
       - name: Restore dependencies for tests
         run: dotnet restore SampleDotNetApp.Tests
 
