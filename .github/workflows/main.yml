@@ -64,6 +64,14 @@ jobs:
       - name: Check Chrome Node logs
         run: docker logs selenium-chrome
 
+      - name: Test connectivity to Chrome Node
+        run: |
+          docker exec selenium-hub ping -c 4 selenium-chrome
+          docker exec selenium-chrome ping -c 4 selenium-hub
+
+      - name: Check detailed status of Selenium Grid
+        run: curl http://localhost:4444/status
+
       - name: Run .NET tests
         run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx"
 
