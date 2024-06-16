@@ -1,8 +1,12 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 COPY . .
 RUN dotnet restore
-RUN dotnet build -c Release -o /app/build
+RUN dotnet publish -c Release -o /app/out
 
-EXPOSE 80
-ENTRYPOINT ["dotnet", "/app/build/MyWebApp.dll"]
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "MyWebApp.dll"] 
