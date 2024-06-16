@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Docker container for .NET application
         run: |
-          docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:80 sample-dotnet-app
+          docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:8080 sample-dotnet-app
 
       - name: Wait for .NET application to be ready
         run: |
