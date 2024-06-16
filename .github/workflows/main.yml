@@ -1,9 +1,9 @@
-name: SeleniumDotNetTest
+name: CI
 
 on:
   push:
     branches:
-      - main
+      - "**"
   pull_request:
     branches:
       - main
@@ -19,13 +19,13 @@ jobs:
           - 4444:4444
       selenium-chrome:
         image: selenium/node-chrome:4.21.0-20240522
-        options: --shm-size=2g --network host
+        options: --shm-size=2g
       selenium-edge:
         image: selenium/node-edge:4.21.0-20240522
-        options: --shm-size=2g --network host
+        options: --shm-size=2g
       selenium-firefox:
         image: selenium/node-firefox:4.21.0-20240522
-        options: --shm-size=2g --network host
+        options: --shm-size=2g
 
     steps:
       - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '6.x'  # Adjust the .NET version as per your project requirement
+          dotnet-version: '8.x'  # Adjust the .NET version as per your project requirement
 
       - name: Build .NET application
         run: dotnet build --configuration Release
