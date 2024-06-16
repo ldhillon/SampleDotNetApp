@@ -12,22 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      selenium-hub:
-        image: selenium/hub:4.21.0-20240522
-        ports:
-          - 4444:4444
-        options: --network selenium-grid
-      selenium-chrome:
-        image: selenium/node-chrome:4.21.0-20240522
-        options: --shm-size=2g --network selenium-grid
-      selenium-edge:
-        image: selenium/node-edge:4.21.0-20240522
-        options: --shm-size=2g --network selenium-grid
-      selenium-firefox:
-        image: selenium/node-firefox:4.21.0-20240522
-        options: --shm-size=2g --network selenium-grid
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -37,6 +21,10 @@ jobs:
         with:
           dotnet-version: '8.0'  # Adjust the .NET version as per your project requirement
 
+      - name: Create custom Docker network
+        run: |
+          docker network create selenium-grid
+
       - name: Build .NET application
         run: dotnet build --configuration Release
 
@@ -44,9 +32,25 @@ jobs:
         run: |
           docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
 
+      - name: Run Selenium Hub
+        run: |
+          docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 selenium/hub:4.21.0-20240522
+
+      - name: Run Selenium Chrome Node
+        run: |
+          docker run -d --name selenium-chrome --network selenium-grid --shm-size=2g selenium/node-chrome:4.21.0-20240522
+
+      - name: Run Selenium Edge Node
+        run: |
+          docker run -d --name selenium-edge --network selenium-grid --shm-size=2g selenium/node-edge:4.21.0-20240522
+
+      - name: Run Selenium Firefox Node
+        run: |
+          docker run -d --name selenium-firefox --network selenium-grid --shm-size=2g selenium/node-firefox:4.21.0-20240522
+
       - name: Run Docker container for .NET application
         run: |
-          docker run -d -p 8080:80 --network selenium-grid --name sample-dotnet-app sample-dotnet-app
+          docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:80 sample-dotnet-app
 
       - name: Wait for .NET application to be ready
         run: |
@@ -54,7 +58,7 @@ jobs:
 
       - name: Wait for Selenium Grid to be ready
         run: |
-          sleep 180 # Increased wait time to ensure Selenium Grid is up
+          sleep 120 # Increased wait time to ensure Selenium Grid is up
 
       - name: Check Selenium Grid status
         run: |
@@ -86,5 +90,6 @@ jobs:
 
       - name: Clean up Docker containers
         run: |
-          docker stop sample-dotnet-app
-          docker rm sample-dotnet-app
+          docker stop selenium-hub selenium-chrome selenium-edge selenium-firefox sample-dotnet-app
+          docker rm selenium-hub selenium-chrome selenium-edge selenium-firefox sample-dotnet-app
+          docker network rm selenium-grid
