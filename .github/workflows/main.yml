@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Docker container for .NET application
         run: |
-          docker run -d -p 8080:8080 --name sample-dotnet-app sample-dotnet-app
+          docker run -d -p 8080:80 --name sample-dotnet-app sample-dotnet-app
 
       - name: Wait for .NET application to be ready
         run: |
@@ -53,7 +53,11 @@ jobs:
 
       - name: Wait for Selenium Grid to be ready
         run: |
-          sleep 90 # Increased wait time to ensure Selenium Grid is up
+          sleep 120 # Increased wait time to ensure Selenium Grid is up
+
+      - name: Check Selenium Grid status
+        run: |
+          curl http://localhost:4444/wd/hub/status
 
       - name: Restore dependencies for tests
         run: dotnet restore SampleDotNetApp.Tests
