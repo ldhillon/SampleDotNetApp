@@ -64,6 +64,10 @@ jobs:
         run: |
           curl http://localhost:4444/wd/hub/status
 
+      - name: List Selenium Nodes
+        run: |
+          curl http://localhost:4444/grid/api/hub
+
       - name: Check running Docker containers
         run: |
           docker ps -a
