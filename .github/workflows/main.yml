@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0'  # Adjust the .NET version as per your project requirement
+
+      - name: Create custom Docker network
+        run: |
+          docker network create selenium-grid || true  # Create the network if it does not exist
+
+      - name: Build .NET application
+        run: dotnet build --configuration Release
+
+      - name: Build Docker image for .NET application
+        run: docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
+
+      - name: Run Selenium Hub
+        run: |
+          docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 --network-alias selenium-hub selenium/hub:4.21.0-20240522
+
+      - name: Wait for Selenium Hub to be ready
+        run: sleep 30 # Wait for 30 seconds to ensure Selenium Hub is up and running
+
+      - name: Check Selenium Hub status
+        run: curl http://localhost:4444/wd/hub/status
+
+      - name: Check running Docker containers
+        run: docker ps -a
+
+      - name: Check network connections
+        run: docker network ls && docker network inspect selenium-grid
+
+      - name: Clean up Docker containers
+        if: always()
+        run: |
+          docker stop selenium-hub
+          docker rm selenium-hub
+          docker network rm selenium-grid
