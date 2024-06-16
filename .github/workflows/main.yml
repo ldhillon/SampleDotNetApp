@@ -1,91 +1,44 @@
-name: CI
+name: .NET
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Check out repository
+      uses: actions/checkout@v2
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: '8.0'
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
 
-      - name: Create custom Docker network
-        run: |
-          docker network create selenium-grid || true
+    - name: Install dependencies
+      run: dotnet restore
 
-      - name: Build .NET application
-        run: dotnet build --configuration Release
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
 
-      - name: Build Docker image for .NET application
-        run: docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
+    - name: Start Selenium Hub
+      run: docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 selenium/hub:4.21.0-20240522
 
-      - name: Run Selenium Hub
-        run: |
-          docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 --network-alias selenium-hub selenium/hub:4.21.0-20240522
+    - name: Start Chrome Node
+      run: docker run -d --name selenium-chrome --network selenium-grid -e SE_EVENT_BUS_HOST=selenium-hub selenium/node-chrome:4.21.0-20240522
 
-      - name: Wait for Selenium Hub to be ready
-        run: sleep 30
+    - name: Wait for Selenium Grid to be ready
+      run: |
+        until curl -s http://localhost:4444/wd/hub/status | grep -q '"ready": true'; do
+          sleep 1
+        done
 
-      - name: Check Selenium Hub status
-        run: curl http://localhost:4444/wd/hub/status
+    - name: Run .NET tests
+      run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx" -v d
 
-      - name: Run Selenium Chrome Node
-        run: |
-          docker run -d --name selenium-chrome --network selenium-grid --shm-size=2g \
-            -e SE_EVENT_BUS_HOST=selenium-hub \
-            -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
-            -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
-            selenium/node-chrome:4.21.0-20240522
-
-      - name: Wait for Chrome Node to be ready
-        run: sleep 30
-
-      - name: Check Selenium Hub status again
-        run: curl http://localhost:4444/wd/hub/status
-
-      - name: Check running Docker containers
-        run: docker ps -a
-
-      - name: Check network connections
-        run: docker network ls && docker network inspect selenium-grid
-
-      - name: Check Chrome Node logs
-        run: docker logs selenium-chrome
-
-      - name: Check detailed status of Selenium Grid
-        run: curl http://localhost:4444/status
-
-      - name: Check connectivity from .NET test container to Selenium Hub
-        run: docker run --network selenium-grid --rm curlimages/curl:7.85.0 curl http://selenium-hub:4444/status
-
-      - name: Run .NET tests with additional logging
-        run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx" -v d
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: TestResults
-          path: SampleDotNetApp.Tests/TestResults/TestResults.trx
-
-      - name: Clean up Docker containers
-        if: always()
-        run: |
-          docker stop selenium-hub selenium-chrome
-          docker rm selenium-hub selenium-chrome
-          docker network rm selenium-grid
-
-
-          
+    - name: Upload test logs
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-log
+        path: SampleDotNetApp.Tests/TestResults/test-log.txt

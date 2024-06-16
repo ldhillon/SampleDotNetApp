@@ -2,28 +2,33 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
+using System.IO;
 
 namespace SeleniumTests
 {
     public class UnitTest1
     {
         private IWebDriver driver;
+        private StreamWriter logWriter;
 
         [SetUp]
         public void Init()
         {
             var options = new ChromeOptions();
             var uri = new Uri("http://selenium-hub:4444/wd/hub");
-            Console.WriteLine($"Attempting to connect to Selenium Grid at {uri}");
+            var logFilePath = Path.Combine(TestContext.CurrentContext.WorkDirectory, "test-log.txt");
+            logWriter = new StreamWriter(logFilePath, true);
+            logWriter.AutoFlush = true;
+            logWriter.WriteLine($"Attempting to connect to Selenium Grid at {uri}");
 
             try
             {
                 driver = new RemoteWebDriver(uri, options);
-                Console.WriteLine("Successfully connected to Selenium Grid");
+                logWriter.WriteLine("Successfully connected to Selenium Grid");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to connect to Selenium Grid: {ex.Message}");
+                logWriter.WriteLine($"Failed to connect to Selenium Grid: {ex.Message}");
                 throw;
             }
         }
@@ -31,29 +36,34 @@ namespace SeleniumTests
         [Test]
         public void Test_HelloWorld()
         {
-            Console.WriteLine("Starting Test_HelloWorld");
+            logWriter.WriteLine("Starting Test_HelloWorld");
             driver.Navigate().GoToUrl("http://example.com");
-            Console.WriteLine("Navigated to http://example.com");
+            logWriter.WriteLine("Navigated to http://example.com");
             Assert.AreEqual("Example Domain", driver.Title);
-            Console.WriteLine("Test_HelloWorld completed successfully");
+            logWriter.WriteLine("Test_HelloWorld completed successfully");
         }
 
         [TearDown]
         public void Cleanup()
         {
-            Console.WriteLine("Cleaning up and closing the browser");
+            logWriter.WriteLine("Cleaning up and closing the browser");
             if (driver != null)
             {
                 driver.Quit();
-                Console.WriteLine("Browser closed successfully");
+                logWriter.WriteLine("Browser closed successfully");
             }
             else
             {
-                Console.WriteLine("Driver was null, no browser to close");
+                logWriter.WriteLine("Driver was null, no browser to close");
             }
+            logWriter.Close();
         }
     }
 }
+
+
+
+
 
 
 // using System;
