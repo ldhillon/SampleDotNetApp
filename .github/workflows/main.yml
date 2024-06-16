@@ -23,18 +23,17 @@ jobs:
 
       - name: Create custom Docker network
         run: |
-          docker network create selenium-grid
+          docker network create selenium-grid || true  # Create the network if it does not exist
 
       - name: Build .NET application
         run: dotnet build --configuration Release
 
       - name: Build Docker image for .NET application
-        run: |
-          docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
+        run: docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
 
       - name: Run Selenium Hub
         run: |
-          docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 selenium/hub:4.21.0-20240522
+          docker run -d --name selenium-hub --network selenium-grid -p 4444:4444 --network-alias selenium-hub selenium/hub:4.21.0-20240522
 
       - name: Run Selenium Chrome Node
         run: |
@@ -50,44 +49,34 @@ jobs:
 
       - name: Run Docker container for .NET application
         run: |
-          docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:8080 sample-dotnet-app
+          docker run -d --name sample-dotnet-app --network selenium-grid -p 8080:80 sample-dotnet-app
 
       - name: Wait for .NET application to be ready
-        run: |
-          sleep 30 # Adjust this duration based on your app's startup time
+        run: sleep 30 # Adjust this duration based on your app's startup time
 
       - name: Wait for Selenium Grid to be ready
-        run: |
-          sleep 180 # Increased wait time to ensure Selenium Grid is up
+        run: sleep 240 # Increased wait time to ensure Selenium Grid is up
 
       - name: Check Selenium Grid status
-        run: |
-          curl http://localhost:4444/wd/hub/status
+        run: curl http://localhost:4444/wd/hub/status
 
       - name: List Selenium Nodes
-        run: |
-          curl http://localhost:4444/grid/api/hub
+        run: curl http://localhost:4444/status
 
       - name: Check running Docker containers
-        run: |
-          docker ps -a
+        run: docker ps -a
 
       - name: Check network connections
-        run: |
-          docker network ls
-          docker network inspect selenium-grid
+        run: docker network ls && docker network inspect selenium-grid
 
       - name: Inspect Chrome Node Logs
-        run: |
-          docker logs selenium-chrome
+        run: docker logs selenium-chrome
 
       - name: Inspect Edge Node Logs
-        run: |
-          docker logs selenium-edge
+        run: docker logs selenium-edge
 
       - name: Inspect Firefox Node Logs
-        run: |
-          docker logs selenium-firefox
+        run: docker logs selenium-firefox
 
       - name: Restore dependencies for tests
         run: dotnet restore SampleDotNetApp.Tests
