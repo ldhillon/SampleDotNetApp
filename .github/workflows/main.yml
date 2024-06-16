@@ -64,6 +64,16 @@ jobs:
       - name: Check Chrome Node logs
         run: docker logs selenium-chrome
 
+      - name: Run .NET tests
+        run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestResults
+          path: SampleDotNetApp.Tests/TestResults/TestResults.trx
+
       - name: Clean up Docker containers
         if: always()
         run: |
