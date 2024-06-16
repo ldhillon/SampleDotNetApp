@@ -57,6 +57,9 @@ jobs:
       - name: Check network connections
         run: docker network ls && docker network inspect selenium-grid
 
+      - name: Check Chrome Node logs
+        run: docker logs selenium-chrome
+
       - name: Clean up Docker containers
         if: always()
         run: |
