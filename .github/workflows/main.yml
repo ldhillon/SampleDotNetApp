@@ -33,9 +33,24 @@ jobs:
 
     - name: Wait for Selenium Grid to be ready
       run: |
-        until curl -s http://localhost:4444/wd/hub/status | grep -q '"ready": true'; do
-          sleep 1
+        for i in {1..60}; do
+          if curl -s http://localhost:4444/wd/hub/status | grep -q '"ready": true'; then
+            echo "Selenium Grid is ready"
+            break
+          fi
+          echo "Waiting for Selenium Grid to be ready..."
+          sleep 5
         done
+        curl -s http://localhost:4444/wd/hub/status
+
+    - name: Check Docker container status
+      run: docker ps -a
+
+    - name: Check Selenium Hub logs
+      run: docker logs selenium-hub
+
+    - name: Check Selenium Chrome Node logs
+      run: docker logs selenium-chrome
 
     - name: Run .NET tests
       run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx" -v d
