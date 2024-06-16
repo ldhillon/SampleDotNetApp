@@ -41,6 +41,16 @@ jobs:
       - name: Check Selenium Hub status
         run: curl http://localhost:4444/wd/hub/status
 
+      - name: Run Selenium Chrome Node
+        run: |
+          docker run -d --name selenium-chrome --network selenium-grid --shm-size=2g -e HUB_HOST=selenium-hub selenium/node-chrome:4.21.0-20240522
+
+      - name: Wait for Chrome Node to be ready
+        run: sleep 30 # Wait for 30 seconds to ensure Chrome Node is up and running
+
+      - name: Check Selenium Hub status again
+        run: curl http://localhost:4444/wd/hub/status
+
       - name: Check running Docker containers
         run: docker ps -a
 
@@ -50,6 +60,6 @@ jobs:
       - name: Clean up Docker containers
         if: always()
         run: |
-          docker stop selenium-hub
-          docker rm selenium-hub
+          docker stop selenium-hub selenium-chrome
+          docker rm selenium-hub selenium-chrome
           docker network rm selenium-grid
