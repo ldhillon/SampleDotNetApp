@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Docker container for .NET application
         run: |
-          docker run -d -p 8080:80 --name sample-dotnet-app sample-dotnet-app
+          docker run -d -p 8080:8080 --name sample-dotnet-app sample-dotnet-app
 
       - name: Wait for .NET application to be ready
         run: |
