@@ -1,0 +1,90 @@
+name: mydotnet
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      selenium-hub:
+        image: selenium/hub:4.21.0-20240522
+        ports:
+          - 4444:4444
+
+      selenium-chrome:
+        image: selenium/node-chrome:4.21.0-20240522
+        depends_on:
+          - selenium-hub
+        environment:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+
+      selenium-edge:
+        image: selenium/node-edge:4.21.0-20240522
+        depends_on:
+          - selenium-hub
+        environment:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+          
+      selenium-firefox:
+        image: selenium/node-firefox:4.21.0-20240522
+        depends_on:
+          - selenium-hub
+        environment:
+          SE_EVENT_BUS_HOST: selenium-hub
+          SE_EVENT_BUS_PUBLISH_PORT: 4442
+          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.x'  # Adjust the .NET version as per your project requirement
+
+      - name: Build .NET application
+        run: dotnet build --configuration Release
+
+      - name: Build Docker image for .NET application
+        run: |
+          docker build -t sample-dotnet-app -f SampleDotNetApp/Dockerfile .
+
+      - name: Run Docker container for .NET application
+        run: |
+          docker run -d -p 8080:80 --name sample-dotnet-app sample-dotnet-app
+
+      - name: Wait for .NET application to be ready
+        run: |
+          sleep 30 # Adjust this duration based on your app's startup time
+
+      - name: Restore dependencies for tests
+        run: dotnet restore SampleDotNetApp.Tests
+
+      - name: Run tests
+        env:
+          HUB_HOST: selenium-hub
+        run: dotnet test SampleDotNetApp.Tests --logger:"trx;LogFileName=TestResults.trx"
+
+      - name: Publish Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestResults
+          path: TestResults.trx
+
+      - name: Clean up Docker containers
+        run: |
+          docker stop sample-dotnet-app
+          docker rm sample-dotnet-app
