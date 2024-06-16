@@ -74,4 +74,3 @@ jobs:
         run: |
           docker stop sample-dotnet-app
           docker rm sample-dotnet-app
-
