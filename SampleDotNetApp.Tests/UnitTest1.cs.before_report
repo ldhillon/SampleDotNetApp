@@ -1,0 +1,54 @@
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Remote;
+using System;
+
+namespace SeleniumGridTests
+{
+    [TestFixture]
+    [Parallelizable(ParallelScope.All)]
+    public class SeleniumTests
+    {
+        private IWebDriver driver;
+
+        [TestCase("chrome")]
+        [TestCase("edge")]
+        [TestCase("firefox")]
+        public void TestSampleDotNetApp(string browserType)
+        {
+            var gridUrl = "http://localhost:4444/wd/hub";
+            switch (browserType)
+            {
+                case "chrome":
+                    var chromeOptions = new ChromeOptions();
+                    driver = new RemoteWebDriver(new Uri(gridUrl), chromeOptions);
+                    break;
+                case "edge":
+                    var edgeOptions = new EdgeOptions();
+                    driver = new RemoteWebDriver(new Uri(gridUrl), edgeOptions);
+                    break;
+                case "firefox":
+                    var firefoxOptions = new FirefoxOptions();
+                    driver = new RemoteWebDriver(new Uri(gridUrl), firefoxOptions);
+                    break;
+                default:
+                    throw new ArgumentException($"Browser type '{browserType}' is not supported.");
+            }
+
+            driver.Navigate().GoToUrl("http://sample-dotnet-app:8080");
+
+            // Get the page source and print it for debugging
+            string pageSource = driver.PageSource;
+            Console.WriteLine(pageSource);
+
+            // Update the assertion to check for "Hello, world!" in the page source
+            Assert.IsTrue(pageSource.Contains("Hello, world!"), $"Expected 'Hello, world!' in page source but found: {pageSource}");
+
+            driver.Quit();  // Ensure the browser is closed after the test
+        }
+    }
+}
+
