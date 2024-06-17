@@ -1,4 +1,19 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test-env
+# Build the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
+
+# Copy and restore the project file
+COPY MyWebApp/MyWebApp.csproj ./MyWebApp/
+RUN dotnet restore MyWebApp/MyWebApp.csproj
+
+# Copy everything else for the web app
+COPY MyWebApp/. ./MyWebApp/
+#Build the app so that the entrypoint for the container has a built binary
+RUN dotnet publish MyWebApp/MyWebApp.csproj -c Release -o /app/out
+
+
+# Test image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
 WORKDIR /app
 
 # Copy and restore the test project file
