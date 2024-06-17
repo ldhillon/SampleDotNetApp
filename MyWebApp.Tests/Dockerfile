@@ -12,14 +12,14 @@ WORKDIR /app/tests
 COPY MyWebApp.Tests/MyWebApp.Tests.csproj ./
 RUN dotnet restore
 
-# Copy everything else
-COPY . .
+# Copy everything else for the tests
+COPY MyWebApp.Tests/. ./
 
 # Run the tests.
-RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release  
+RUN dotnet build MyWebApp.Tests/MyWebApp.Tests.csproj -c Release 
+RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release --logger trx  # Use TRX logger for detailed output
 
-# List files in the output directory (uncomment for debugging)
+# List files in the output directory 
 RUN ls -la /app/tests/bin/Release/net8.0 
 
-# Update the Entrypoint to use the correct path and command
 ENTRYPOINT ["dotnet", "/app/tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
