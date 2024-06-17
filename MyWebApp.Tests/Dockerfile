@@ -1,26 +1,28 @@
-# Use the .NET 8 SDK image for both building and testing
-FROM mcr.microsoft.com/dotnet/sdk:8.0
-
-# Set the working directory within the container
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copy all project files to the container
-COPY . .
-
-# Restore dependencies for both projects
-RUN dotnet restore MyWebApp.Tests/MyWebApp.Tests.csproj
-
-# Build the web application
+# Copy and build the main application
+COPY MyWebApp/MyWebApp.csproj ./MyWebApp/
+RUN dotnet restore MyWebApp/MyWebApp.csproj
+COPY MyWebApp/. ./MyWebApp/
 RUN dotnet publish MyWebApp/MyWebApp.csproj -c Release -o /app/out
 
-# Build the test project
-RUN dotnet build MyWebApp.Tests/MyWebApp.Tests.csproj -c Release 
+# Copy and build the test project
+WORKDIR /app/tests
+COPY MyWebApp.Tests/MyWebApp.Tests.csproj ./
+RUN dotnet restore
 
-# Run the tests with detailed logging
-RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release --logger trx  
+# Copy everything else
+COPY MyWebApp.Tests/. ./
 
-# List files in the output directory (uncomment to check the presence of the DLL)
-RUN ls -la /app/MyWebApp.Tests/bin/Release/net8.0 
+# Copy built application from the previous stage
+COPY --from=build-env /app/out ./MyWebApp/out
+
+# Run the tests.
+RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release --logger "console;verbosity=detailed"  # Add the logger option
+
+# Optional: List files in the output directory (uncomment for debugging)
+RUN ls -la /app/tests/bin/Release/net8.0 
 
 # Entrypoint to run the tests
-ENTRYPOINT ["dotnet", "/app/MyWebApp.Tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
+ENTRYPOINT ["dotnet", "/app/tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
