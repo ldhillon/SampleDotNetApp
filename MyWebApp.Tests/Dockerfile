@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Copy both project files first
 COPY MyWebApp/MyWebApp.csproj ./MyWebApp/
-COPY MyWebApp.Tests/MyWebApp.Tests.csproj ./MyWebApp.Tests/
+COPY MyWebApp.Tests.csproj ./MyWebApp.Tests/
 
 RUN dotnet restore MyWebApp.Tests/MyWebApp.Tests.csproj
 
