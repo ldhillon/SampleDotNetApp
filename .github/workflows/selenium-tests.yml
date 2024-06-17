@@ -17,6 +17,8 @@ jobs:
           dotnet-version: '8.0.x'
       - name: Install Docker Compose V2
         uses: docker/setup-buildx-action@v2
+        with: 
+          version: 'v2'
 
       - name: Build and run services
         run: docker compose up -d --build
@@ -29,6 +31,7 @@ jobs:
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
+        continue-on-error: true # Add this line
         if: always()
         with:
           files: TestResults/**/*.trx
