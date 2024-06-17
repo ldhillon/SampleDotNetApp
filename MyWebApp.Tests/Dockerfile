@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0
 WORKDIR /app
 
 # Copy the project file first to restore dependencies
-COPY ./MyWebApp.Tests/MyWebApp.Tests.csproj ./MyWebApp.Tests/
+COPY MyWebApp.Tests.csproj ./MyWebApp.Tests/
 RUN dotnet restore MyWebApp.Tests/MyWebApp.Tests.csproj
 
 # Copy everything else
