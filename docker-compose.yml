@@ -1,8 +1,8 @@
-version: '3'
+version: '3.8'
 
 services:
   selenium-hub:
-    image: selenium/hub:latest 
+    image: selenium/hub:latest
     container_name: selenium-hub
     ports:
       - "4444:4444"
@@ -16,11 +16,15 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
   mywebapp:
-    build: ./MyWebApp
-    container_name: mywebapp 
+    build:
+      context: .
+      dockerfile: ./MyWebApp/Dockerfile
+    container_name: mywebapp
   mywebapp-tests:
-    build: ./MyWebApp.Tests
-    container_name: mywebapp-tests 
+    build: 
+      context: .
+      dockerfile: ./MyWebApp.Tests/Dockerfile
+    container_name: mywebapp-tests
     depends_on:
       - selenium-hub
       - mywebapp
