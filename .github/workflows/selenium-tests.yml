@@ -16,7 +16,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - name: Install Docker Compose
-        uses: docker/setup-compose-action@v3 # Use the setup-compose-action@v3 action
+        uses: docker/setup-buildx-action@v2  # Use the setup-buildx-action
         with: 
           version: 'v2'
 
@@ -35,6 +35,6 @@ jobs:
         if: always()
         with:
           files: TestResults/**/*.trx
-
+          
       - name: Stop Selenium Grid and .NET app
         run: docker compose down
