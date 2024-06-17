@@ -1,9 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0
 WORKDIR /app
 
-# Copy and restore only the project files first
-COPY ../MyWebApp/MyWebApp.csproj MyWebApp/
-COPY ./MyWebApp.Tests.csproj MyWebApp.Tests/
+# Copy and restore only the test project file
+COPY MyWebApp.Tests.csproj ./MyWebApp.Tests/
 
 RUN dotnet restore MyWebApp.Tests/MyWebApp.Tests.csproj
 
