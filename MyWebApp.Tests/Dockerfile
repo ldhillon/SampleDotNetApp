@@ -18,4 +18,8 @@ COPY . .
 # Run the tests.
 RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release  
 
-ENTRYPOINT ["dotnet", "test", "/app/tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
+# List files in the output directory (uncomment for debugging)
+RUN ls -la /app/tests/bin/Release/net8.0 
+
+# Update the Entrypoint to use the correct path and command
+ENTRYPOINT ["dotnet", "/app/tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
