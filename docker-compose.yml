@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.8' # Specify Docker Compose version 3.8
 
 services:
   selenium-hub:
@@ -6,22 +6,26 @@ services:
     container_name: selenium-hub
     ports:
       - "4444:4444"
+
   chrome:
     image: selenium/node-chrome:latest
     container_name: chrome
+    shm_size: '2gb'
     depends_on:
       - selenium-hub
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
   mywebapp:
     build:
       context: .
       dockerfile: ./MyWebApp/Dockerfile
     container_name: mywebapp
+
   mywebapp-tests:
-    build: 
+    build:
       context: .
       dockerfile: ./MyWebApp.Tests/Dockerfile
     container_name: mywebapp-tests
