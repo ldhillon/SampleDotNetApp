@@ -22,8 +22,12 @@ jobs:
       - name: Build and run services
         run: docker compose up -d --build
 
+      # - name: Run Selenium tests
+      #   run: docker compose run mywebapp-tests
+
       - name: Run Selenium tests
-        run: docker compose run mywebapp-tests
+        run: docker compose run --rm -T mywebapp-tests 
+
         
       - name: Stop Selenium Grid and .NET app
         run: docker compose down
