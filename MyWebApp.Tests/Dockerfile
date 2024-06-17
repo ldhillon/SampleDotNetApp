@@ -1,21 +1,21 @@
-# Test image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copy and restore the test project file
-COPY MyWebApp.Tests/MyWebApp.Tests.csproj ./MyWebApp.Tests/
-RUN dotnet restore MyWebApp.Tests/MyWebApp.Tests.csproj
+# Copy and build the main application
+COPY MyWebApp/MyWebApp.csproj ./MyWebApp/
+RUN dotnet restore MyWebApp/MyWebApp.csproj
+COPY MyWebApp/. ./MyWebApp/
+RUN dotnet publish MyWebApp/MyWebApp.csproj -c Release -o /app/out
+
+# Copy and build the test project
+WORKDIR /app/tests
+COPY MyWebApp.Tests/MyWebApp.Tests.csproj ./
+RUN dotnet restore
 
 # Copy everything else
-COPY MyWebApp.Tests/. ./MyWebApp.Tests/
-
-# Copy built application from the build-env stage
-COPY --from=build-env /app/out ./MyWebApp/out 
+COPY . .
 
 # Run the tests.
 RUN dotnet test MyWebApp.Tests/MyWebApp.Tests.csproj -c Release  
 
-# List files in the output directory (uncomment for debugging)
-RUN ls -la /app/MyWebApp.Tests/bin/Release/net8.0 
-
-ENTRYPOINT ["dotnet", "test", "/app/MyWebApp.Tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
+ENTRYPOINT ["dotnet", "test", "/app/tests/bin/Release/net8.0/MyWebApp.Tests.dll"]
