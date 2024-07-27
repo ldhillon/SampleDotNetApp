@@ -24,10 +24,11 @@ jobs:
       - name: debug list dir
         run: |
           dir -s 
-          
+
       - name: Copy files using SCP
         run: |
           scp  .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+        shell: powershell
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
