@@ -1,42 +1,72 @@
-name: Selenium Tests with Results Report
+name: SCP Deploy
 
 on:
   push:
     branches:
-      - main
+      - "**"
 
 jobs:
-  selenium-tests:
-    runs-on: ubuntu-latest
-
+  deploy:
+    runs-on: winsrv19
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install Docker Compose V2
+      # - name: Set up SSH key
+      #   run: |
+      #     echo "$PRIVATE_KEY" > $HOME/.ssh/id_rsa
+      #     chmod 600 $HOME/.ssh/id_rsa
+
+      # - name: Ensure SSH known hosts
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     ssh-keyscan -t rsa <remote_server_ip> >> ~/.ssh/known_hosts
+
+      - name: Copy files using SCP
         run: |
-           sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-           sudo chmod +x /usr/local/bin/docker-compose
+          scp -r -i .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+        # env:
+        #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Build and run services
-        run: docker compose up -d --build
+# name: Selenium Tests with Results Report
 
-      - name: Run Selenium tests
-        run: docker compose run --rm -T mywebapp-tests
+# on:
+#   push:
+#     branches:
+#       - main
 
-      - name: Copy test results
-        run: docker cp sampledotnetapp_mywebapp-tests_run:/app/MyWebApp.Tests/TestResults ./TestResults
+# jobs:
+#   selenium-tests:
+#     runs-on: ubuntu-latest
 
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        continue-on-error: true
-        if: always()
-        with:
-          files: TestResults/**/*.trx
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Set up .NET
+#         uses: actions/setup-dotnet@v3
+#         with:
+#           dotnet-version: '8.0.x'
 
-      - name: Stop Selenium Grid and .NET app
-        run: docker compose down
+#       - name: Install Docker Compose V2
+#         run: |
+#            sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#            sudo chmod +x /usr/local/bin/docker-compose
+
+#       - name: Build and run services
+#         run: docker compose up -d --build
+
+#       - name: Run Selenium tests
+#         run: docker compose run --rm -T mywebapp-tests
+
+#       - name: Copy test results
+#         run: docker cp sampledotnetapp_mywebapp-tests_run:/app/MyWebApp.Tests/TestResults ./TestResults
+
+#       - name: Publish Test Results
+#         uses: EnricoMi/publish-unit-test-result-action@v2
+#         continue-on-error: true
+#         if: always()
+#         with:
+#           files: TestResults/**/*.trx
+
+#       - name: Stop Selenium Grid and .NET app
+#         run: docker compose down
 
