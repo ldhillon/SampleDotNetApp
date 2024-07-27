@@ -21,7 +21,10 @@ jobs:
       #   run: |
       #     mkdir -p ~/.ssh
       #     ssh-keyscan -t rsa <remote_server_ip> >> ~/.ssh/known_hosts
-
+      - name: debug list dir
+        run: |
+          dir -s 
+          
       - name: Copy files using SCP
         run: |
           scp  .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
