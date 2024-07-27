@@ -24,7 +24,7 @@ jobs:
 
       - name: Copy files using SCP
         run: |
-          scp -r -i .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+          scp  .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
