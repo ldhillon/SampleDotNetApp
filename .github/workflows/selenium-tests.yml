@@ -30,10 +30,11 @@ jobs:
 
       - name: Copy files using SCP
         run: |
-          $scpPath = C:\Windows\System32\OpenSSH\scp.exe
-          $sourcePath = .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json
-          $destPath = admin@192.168.0.57:C:\Users\admin\
-          Start-Process -FilePath $scpPath -ArgumentList @('-i', "$env:USERPROFILE\.ssh\id_ed25519", $sourcePath, $destPath) -Wait
+          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+          $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
+          $destPath = "admin@192.168.0.57:C:\Users\admin\"
+          scp.exe $sourcePath $destPath
+        #   Start-Process -FilePath $scpPath -ArgumentList @('-i', "$env:USERPROFILE\.ssh\id_ed25519", $sourcePath, $destPath) -Wait
         shell: powershell
 
     #   - name: Verify file on remote server
