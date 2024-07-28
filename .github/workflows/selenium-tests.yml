@@ -27,20 +27,19 @@ jobs:
           Write-Output "Destination Path: $destPath"
         shell: powershell
 
-      - name: Copy files using SCP
+      - name: Test SSH Connection
         run: |
-          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
-          $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
-          $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          & $scpPath -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
+          $sshPath = "C:\Windows\System32\OpenSSH\ssh.exe"
+          $remoteHost = "admin@192.168.0.57"
+          & $sshPath -i "$env:USERPROFILE\.ssh\id_ed25519" $remoteHost "echo SSH connection test"
         shell: powershell
 
-      - name: Verbose SCP Command
+      - name: Copy files using SCP with Verbose Output
         run: |
           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
           $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          & $scpPath -v -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
+          & $scpPath -vvv -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
         shell: powershell
 
 
