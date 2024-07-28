@@ -15,7 +15,7 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
-          ssh -V
+        #   ssh -V
         shell: powershell
 
       - name: Debug Paths
@@ -36,12 +36,12 @@ jobs:
           Start-Process -FilePath $scpPath -ArgumentList @('-i', "$env:USERPROFILE\.ssh\id_ed25519", $sourcePath, $destPath) -Wait
         shell: powershell
 
-      - name: Verify file on remote server
-        run: |
-          $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
-          $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          ssh -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir C:\Users\admin"
-        shell: powershell
+    #   - name: Verify file on remote server
+    #     run: |
+    #       $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
+    #       $destPath = "admin@192.168.0.57:C:\Users\admin\"
+    #       ssh -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir C:\Users\admin"
+    #     shell: powershell
 
 
 # name: SCP Deploy
