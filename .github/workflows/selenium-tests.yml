@@ -9,18 +9,22 @@ jobs:
   deploy:
     runs-on: winsrv19
     permissions: write-all
-    defaults:
-      run:
-        shell: powershell
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Copy files using SCP
         run: |
-          scp.exe -i "%USERPROFILE%\.ssh\id_ed25519" ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json" admin@192.168.0.57:C:\Users\admin\
-        # shell: cmd /c
+          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+          $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
+          $destPath = "admin@192.168.0.57:C:\Users\admin\"
+          & $scpPath -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
+        shell: powershell
+
+      # - name: Copy files using SCP
+      #   run: |
+      #     scp.exe -i "%USERPROFILE%\.ssh\id_ed25519" ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json" admin@192.168.0.57:C:\Users\admin\
+      #   # shell: cmd /c
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
