@@ -15,7 +15,6 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
-        #   ssh -V
         shell: powershell
 
       - name: Debug Paths
@@ -33,13 +32,15 @@ jobs:
           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
           $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          Start-Process -FilePath $scpPath -ArgumentList @('-i', "$env:USERPROFILE\.ssh\id_ed25519", $sourcePath, $destPath) -Wait
+          & $scpPath -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
         shell: powershell
 
-      - name: Verify file on remote server
+      - name: Verbose SCP Command
         run: |
-          $destPath = "C:\Users\admin"
-          ssh -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir $destPath"
+          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+          $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
+          $destPath = "admin@192.168.0.57:C:\Users\admin\"
+          & $scpPath -v -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
         shell: powershell
 
 
