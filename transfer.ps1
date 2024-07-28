@@ -1,7 +1,7 @@
 param (
     [string]$scpPath = "C:\Windows\System32\OpenSSH\scp.exe",
     [string]$sourcePath,
-    [string]$destPath,
+    [string]$destPath
 )
 
 Write-Output "SCP Path: $scpPath"
