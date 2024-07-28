@@ -31,7 +31,9 @@ jobs:
 
       - name: Copy files using SCP
         run: |
-          scp  C:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+          scp.exe -i "%USERPROFILE%\.ssh\id_ed25519" -r .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+
+          # scp  C:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
         shell: cmd
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
