@@ -16,24 +16,24 @@ if (-Not (Test-Path -Path $sshKeyPath)) {
     exit 1
 }
 
-# Test SSH connection
-# Write-Output "Testing SSH connection..."
-# try {
-#     & "C:\Windows\System32\OpenSSH\ssh.exe" -i $sshKeyPath admin@192.168.0.57 "echo SSH connection test"
-#     if ($LASTEXITCODE -ne 0) {
-#         throw "SSH connection test failed with exit code $LASTEXITCODE"
-#     }
-#     Write-Output "SSH connection test successful."
-# }
-# catch {
-#     Write-Error "An error occurred during SSH connection test: $_"
-#     exit 1
-# }
+Test SSH connection
+Write-Output "Testing SSH connection..."
+try {
+    & "C:\Windows\System32\OpenSSH\ssh.exe" -i $sshKeyPath admin@192.168.0.57 "echo SSH connection test"
+    if ($LASTEXITCODE -ne 0) {
+        throw "SSH connection test failed with exit code $LASTEXITCODE"
+    }
+    Write-Output "SSH connection test successful."
+}
+catch {
+    Write-Error "An error occurred during SSH connection test: $_"
+    exit 1
+}
 
 # Perform SCP transfer
 Write-Output "Starting SCP transfer..."
 try {
-    & $scpPath -vvv -i $sshKeyPath $sourcePath $destPath
+    & $scpPath  $sourcePath $destPath
     # & $scpPath -vvv -i $sshKeyPath $sourcePath $destPath
     if ($LASTEXITCODE -ne 0) {
         throw "SCP transfer failed with exit code $LASTEXITCODE"
