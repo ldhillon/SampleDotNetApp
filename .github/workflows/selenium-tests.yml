@@ -25,7 +25,7 @@ jobs:
           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
           $destPath = "admin@192.168.0.57:C:\Users\admin\"
           $sshKeyPath = "$env:USERPROFILE\.ssh\id_ed25519"
-          .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath -sshKeyPath $sshKeyPath
+          .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath
         shell: powershell
 
 
