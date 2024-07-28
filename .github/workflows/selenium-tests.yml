@@ -15,7 +15,7 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
-          ssh -V
+        #   ssh -V
         shell: powershell
 
       - name: Debug Paths
