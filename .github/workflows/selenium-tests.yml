@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: winsrv19
     permissions: write-all
+    defaults:
+      run:
+        shell: cmd
 
     steps:
       - name: Checkout code
