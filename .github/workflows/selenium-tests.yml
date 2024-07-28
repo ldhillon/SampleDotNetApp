@@ -3,7 +3,7 @@ name: SCP Deploy
 on:
   push:
     branches:
-      - "**"
+      - main
 
 jobs:
   deploy:
@@ -15,14 +15,17 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
+          Get-Command ssh
         shell: powershell
 
       - name: Debug Paths
         run: |
           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+          $sshPath = "C:\Windows\System32\OpenSSH\ssh.exe"
           $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
           $destPath = "admin@192.168.0.57:C:\Users\admin\"
           Write-Output "SCP Path: $scpPath"
+          Write-Output "SSH Path: $sshPath"
           Write-Output "Source Path: $sourcePath"
           Write-Output "Destination Path: $destPath"
         shell: powershell
@@ -37,5 +40,49 @@ jobs:
 
       - name: Verify file on remote server
         run: |
-          ssh -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir C:\Users\admin"
+          $sshPath = "C:\Windows\System32\OpenSSH\ssh.exe"
+          & $sshPath -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir C:\Users\admin"
         shell: powershell
+
+
+# name: SCP Deploy
+
+# on:
+#   push:
+#     branches:
+#       - "**"
+
+# jobs:
+#   deploy:
+#     runs-on: winsrv19
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Verify OpenSSH Installation
+#         run: |
+#           Get-Command scp
+#         shell: powershell
+
+#       - name: Debug Paths
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           Write-Output "SCP Path: $scpPath"
+#           Write-Output "Source Path: $sourcePath"
+#           Write-Output "Destination Path: $destPath"
+#         shell: powershell
+
+#       - name: Copy files using SCP
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = ".\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           Start-Process -FilePath $scpPath -ArgumentList @('-i', "$env:USERPROFILE\.ssh\id_ed25519", $sourcePath, $destPath) -Wait
+#         shell: powershell
+
+#       - name: Verify file on remote server
+#         run: |
+#           ssh -i "$env:USERPROFILE\.ssh\id_ed25519" admin@192.168.0.57 "dir C:\Users\admin"
+#         shell: powershell
