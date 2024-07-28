@@ -24,14 +24,14 @@ jobs:
       # #     mkdir -p ~/.ssh
       # #     ssh-keyscan -t rsa <remote_server_ip> >> ~/.ssh/known_hosts
 
-      - name: debug list dir
-        run: |
-          pwd
-          dir -s .\MyWebApp
+      # - name: debug list dir
+      #   run: |
+      #     pwd
+      #     dir -s .\MyWebApp
 
       - name: Copy files using SCP
         run: |
-          scp  .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin
+          scp  C:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
         shell: cmd
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
