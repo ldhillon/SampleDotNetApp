@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: winsrv19
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -15,26 +15,57 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
-        #   ssh -V
+          ssh -V
         shell: powershell
 
-      - name: Debug Paths
+      - name: Run SCP Transfer Script
         run: |
           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
           $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          Write-Output "SCP Path: $scpPath"
-          Write-Output "Source Path: $sourcePath"
-          Write-Output "Destination Path: $destPath"
+          $sshKeyPath = "$env:USERPROFILE\.ssh\id_ed25519"
+          .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath -sshKeyPath $sshKeyPath
         shell: powershell
 
-      - name: Copy files using SCP with Verbose Output
-        run: |
-          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
-          $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
-          $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          & $scpPath -vvv -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
-        shell: powershell
+
+
+# name: SCP Deploy
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: winsrv19
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Verify OpenSSH Installation
+#         run: |
+#           Get-Command scp
+#         #   ssh -V
+#         shell: powershell
+
+#       - name: Debug Paths
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           Write-Output "SCP Path: $scpPath"
+#           Write-Output "Source Path: $sourcePath"
+#           Write-Output "Destination Path: $destPath"
+#         shell: powershell
+
+#       - name: Copy files using SCP with Verbose Output
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           & $scpPath -vvv -i "$env:USERPROFILE\.ssh\id_ed25519" $sourcePath $destPath
+#         shell: powershell
 
 
 # name: SCP Deploy
