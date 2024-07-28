@@ -15,6 +15,7 @@ jobs:
       - name: Verify OpenSSH Installation
         run: |
           Get-Command scp
+          ssh -V
         shell: powershell
 
       - name: Debug Paths
@@ -25,13 +26,6 @@ jobs:
           Write-Output "SCP Path: $scpPath"
           Write-Output "Source Path: $sourcePath"
           Write-Output "Destination Path: $destPath"
-        shell: powershell
-
-      - name: Test SSH Connection
-        run: |
-          $sshPath = "C:\Windows\System32\OpenSSH\ssh.exe"
-          $remoteHost = "admin@192.168.0.57"
-          & $sshPath -i "$env:USERPROFILE\.ssh\id_ed25519" $remoteHost "echo SSH connection test"
         shell: powershell
 
       - name: Copy files using SCP with Verbose Output
