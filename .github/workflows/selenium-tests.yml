@@ -11,30 +11,17 @@ jobs:
     permissions: write-all
     defaults:
       run:
-        shell: cmd
+        shell: powershell
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # # - name: Set up SSH key
-      # #   run: |
-      # #     echo "$PRIVATE_KEY" > $HOME/.ssh/id_rsa
-      # #     chmod 600 $HOME/.ssh/id_rsa
-
-      # # - name: Ensure SSH known hosts
-      # #   run: |
-      # #     mkdir -p ~/.ssh
-      # #     ssh-keyscan -t rsa <remote_server_ip> >> ~/.ssh/known_hosts
-
-      # - name: debug list dir
-      #   run: |
-      #     pwd
-      #     dir -s .\MyWebApp
-
       - name: Copy files using SCP
         run: |
-          scp.exe -i "%USERPROFILE%\.ssh\id_ed25519" .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
+          Copy-Item .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json -Destination "admin@192.168.0.57:C:\Users\admin\" -Recurse -UseOpenSSH -PrivateKeyFile "%USERPROFILE%\.ssh\id_ed25519"
+
+        # scp.exe -i "%USERPROFILE%\.ssh\id_ed25519" .\MyWebApp\obj\MyWebApp.csproj.nuget.dgspec.json admin@192.168.0.57:C:\Users\admin\
         # shell: cmd /c
         # env:
         #   PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
