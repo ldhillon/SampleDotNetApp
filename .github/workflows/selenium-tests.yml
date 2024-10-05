@@ -1,31 +1,53 @@
-name: SCP Deploy
+name: Windows PowerShell Service Workflow
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  deploy:
-    runs-on: winsrv19
-    permissions: write-all
+  run-service:
+    runs-on: sample
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Verify OpenSSH Installation
+      - name: Copy service script to runner
         run: |
-          Get-Command scp
-        #   ssh -V
-        shell: powershell
+          New-Item -Path "C:\MyService" -ItemType Directory -Force
+          Copy-Item -Path ./MyService.ps1 -Destination C:\MyService\MyService.ps1
 
-      - name: Run SCP Transfer Script
-        run: |
-          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
-          $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
-          $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath
+      - name: Run PowerShell service registration
         shell: powershell
+        run: |
+          ./Register-Service.ps1
+
+
+# name: SCP Deploy
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: winsrv19
+#     permissions: write-all
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Verify OpenSSH Installation
+#         run: |
+#           Get-Command scp
+#         #   ssh -V
+#         shell: powershell
+
+#       - name: Run SCP Transfer Script
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath
+#         shell: powershell
 
 
 
