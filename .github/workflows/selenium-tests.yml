@@ -25,8 +25,6 @@ jobs:
     if: ${{ github.event.inputs.notify }}
     steps:
       - run: echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
-
-  
           
 # name: SCP Deploy
 
