@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Frist Dispatch Choice
         run: |
-          echo "Deploying to ${{ github.event.inputs.environment }}
+          echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
           
 # name: SCP Deploy
 
