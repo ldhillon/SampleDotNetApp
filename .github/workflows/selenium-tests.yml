@@ -1,30 +1,60 @@
-name: workflow dispatchmultiple inputs
-on: 
+name: Manual Trigger Workflow with loglevel & tags
+#get log & tags information
+on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'The environment to deploy to...'
+      logLevel:
+        description: 'Log level'
         required: true
-        type: environment
-      notify:
-        description: 'The environment to deploy to...'
+        default: 'information'
+        type: choice
+        options:
+          - information
+          - debug
+          - warning
+          - critical
+      tags:
+        description: 'Purpose of Run This Workflow?'
         required: true
-        type: boolean 
-        default: false
-  
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Frist Dispatch Choice
-        run: |
-          echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
+        type: string
 
-  notify:
+jobs:
+  print-tag:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.notify }}
     steps:
-      - run: echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
+      - name: Print the purpose of run
+        run: echo  ${{ inputs.tags }} purpose
+
+
+
+
+# name: workflow dispatchmultiple inputs
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#       environment:
+#         description: 'The environment to deploy to...'
+#         required: true
+#         type: environment
+#       notify:
+#         description: 'The environment to deploy to...'
+#         required: true
+#         type: boolean 
+#         default: false
+  
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Frist Dispatch Choice
+#         run: |
+#           echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
+
+#   notify:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event.inputs.notify }}
+#     steps:
+#       - run: echo "Deploying to ${{ github.event.inputs.environment }} environment!" 
           
 # name: SCP Deploy
 
