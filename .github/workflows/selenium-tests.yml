@@ -1,31 +1,53 @@
-name: SCP Deploy
-
-on:
-  push:
-    branches:
-      - main
-
+name: Learning Workflow Dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to deploy to...'
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
+          - stage
+          - qa
+          - dev
 jobs:
   deploy:
-    runs-on: winsrv19
-    permissions: write-all
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Verify OpenSSH Installation
+      - name: Frist Dispatch Choice
         run: |
-          Get-Command scp
-        #   ssh -V
-        shell: powershell
+          echo "Deploying to ${{ github.event.inputs.environment }}
+          
+# name: SCP Deploy
 
-      - name: Run SCP Transfer Script
-        run: |
-          $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
-          $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
-          $destPath = "admin@192.168.0.57:C:\Users\admin\"
-          .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath
-        shell: powershell
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: winsrv19
+#     permissions: write-all
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Verify OpenSSH Installation
+#         run: |
+#           Get-Command scp
+#         #   ssh -V
+#         shell: powershell
+
+#       - name: Run SCP Transfer Script
+#         run: |
+#           $scpPath = "C:\Windows\System32\OpenSSH\scp.exe"
+#           $sourcePath = "c:\Runners\GitHub\actions-runner\_work\SampleDotNetApp\SampleDotNetApp\MyWebApp\obj\*.json"
+#           $destPath = "admin@192.168.0.57:C:\Users\admin\"
+#           .\transfer.ps1 -scpPath $scpPath -sourcePath $sourcePath -destPath $destPath
+#         shell: powershell
 
 
 
