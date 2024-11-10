@@ -1,17 +1,11 @@
-name: Learning Workflow Dispatch
+name: Github provided Environment Variables
 on: 
   workflow_dispatch:
     inputs:
       environment:
         description: 'The environment to deploy to...'
         required: true
-        default: production
-        type: choice
-        options:
-          - production
-          - stage
-          - qa
-          - dev
+        type: environment
 jobs:
   deploy:
     runs-on: ubuntu-latest
